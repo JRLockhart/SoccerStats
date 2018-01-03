@@ -15,13 +15,7 @@ namespace SoccerStats
             DirectoryInfo directory = new DirectoryInfo(currentDirectory);
 
             var fileName = Path.Combine(directory.FullName, "SoccerGameResults.csv");
-            var fileConents = ReadFile(fileName);
-
-            string[] fileLines = fileConents.Split(new char[] { 'r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach(var line in fileLines)
-            {
-                Console.WriteLine(line);
-            }
+            var fileContents = ReadSoccerResults(fileName);
             Console.ReadLine();
 
         }
@@ -32,6 +26,64 @@ namespace SoccerStats
             {
                 return reader.ReadToEnd();
             }
+        }
+
+        public static List<GameResult> ReadSoccerResults(string fileName)
+        {
+            var soccerResults = new List<GameResult>();
+            using (var reader = new StreamReader(fileName))
+            {
+                string line = "";
+
+                reader.ReadLine();
+                while ((line = reader.ReadLine()) != null)
+                {
+
+                    var gameResult = new GameResult();
+                    string[] values = line.Split(',');
+                    gameResult.GameDate = DateTime.Parse(values[0]);
+                    DateTime gameDate;
+
+                    if(DateTime.TryParse(values[0], out gameDate))
+                    {
+                        gameResult.GameDate = gameDate;
+                    }
+                    gameResult.TeamName = values[1];
+                    HomeOrAway homeOrAway;
+                    if (Enum.TryParse(values[2], out homeOrAway))
+                    {
+                        gameResult.HomeOrAway = homeOrAway;
+                    }
+
+                    int parseInt;
+                    if(int.TryParse(values[3], out parseInt))
+                    {
+                        gameResult.Goals = parseInt;
+                    }
+                    if (int.TryParse(values[4], out parseInt))
+                    {
+                        gameResult.GoalAttempts = parseInt;
+                    }
+                    if (int.TryParse(values[5], out parseInt))
+                    {
+                        gameResult.ShotsOnGoal = parseInt;
+                    }
+                    if (int.TryParse(values[6], out parseInt))
+                    {
+                        gameResult.ShotsOffGoal = parseInt;
+                    }
+
+                    double possessionPercent;
+                    if(double.TryParse(values[7], out possessionPercent))
+                    {
+                        gameResult.PosessionPercent = possessionPercent;
+                    }
+
+                   
+                    soccerResults.Add(gameResult);
+                }  
+            }
+            return soccerResults;
         }
     }
 }
