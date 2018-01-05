@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace SoccerStats
 {
@@ -24,7 +25,11 @@ namespace SoccerStats
             {
                 
             }
+
+            Console.WriteLine(GetGoogleHomePage());
             Console.ReadLine();
+
+
 
         }
 
@@ -125,6 +130,30 @@ namespace SoccerStats
         public static void SerializePlayerToFile(List<Player> players, string fileName)
         {
 
+        }
+
+        public static string GetGoogleHomePage()
+        {
+            var webClient = new WebClient();
+            byte[] googleHome = webClient.DownloadData("https://www.google.com");
+
+            using (var stream = new MemoryStream(googleHome))
+            using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
+        public static string GetNewsForPlayer(string playerName)
+        {
+            var webClient = new WebClient();
+            byte[] searchResults = webClient.DownloadData("https://www.google.com");
+
+            using (var stream = new MemoryStream(searchResults))
+            using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
         }
     }
 }
